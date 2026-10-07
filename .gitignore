@@ -1,0 +1,18 @@
+@"
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# editor / OS
+.vscode/
+.DS_Store
+
+# local data
+*.db
+*.sqlite3
+"@ | Set-Content -Encoding utf8 .gitignore
