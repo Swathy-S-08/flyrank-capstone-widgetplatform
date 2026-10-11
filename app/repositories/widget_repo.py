@@ -45,3 +45,7 @@ def save(db: Session, widget: Widget) -> Widget:
 def delete(db: Session, widget: Widget) -> None:
     db.delete(widget)
     db.commit()
+
+
+def get_public(db: Session, widget_id: str) -> Widget | None:
+    return db.scalar(select(Widget).where(Widget.id == widget_id))
