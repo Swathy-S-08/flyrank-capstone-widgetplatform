@@ -16,3 +16,5 @@ venv/
 *.db
 *.sqlite3
 "@ | Set-Content -Encoding utf8 .gitignore
+login.json
+body.json
