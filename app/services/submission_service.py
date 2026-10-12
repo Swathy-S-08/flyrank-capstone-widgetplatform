@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.errors import NotFoundError, ValidationFailed
 from app.repositories import submission_repo, widget_repo
 from app.schemas.submission import SubmissionIn
+from app.services import geo
 
 EMAIL_RE = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
 MAX_LEN = {"text": 500, "email": 254, "textarea": 5000}
@@ -55,11 +56,16 @@ def create_submission(
         if existing:
             return existing.id, False
 
+    geo_result = geo.lookup(ip)
+
     values = {
         "widget_id": widget.id,
         "owner_id": widget.owner_id,
         "data": {k: v.strip() for k, v in payload.data.items()},
         "ip_address": ip,
+        "country": geo_result.country if geo_result else None,
+        "city": geo_result.city if geo_result else None,
+        "geo_provider": geo_result.provider if geo_result else None,
         "idempotency_key": payload.idempotency_key,
         "notification_status": "pending",
     }
