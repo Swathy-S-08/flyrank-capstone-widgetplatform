@@ -2,13 +2,19 @@ from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.rate_limit import rate_limit_submissions
 from app.schemas.submission import SubmissionIn, SubmissionOut
 from app.services import submission_service
 
 router = APIRouter(prefix="/submissions", tags=["submissions"])
 
 
-@router.post("", response_model=SubmissionOut, status_code=201)
+@router.post(
+    "",
+    response_model=SubmissionOut,
+    status_code=201,
+    dependencies=[Depends(rate_limit_submissions)],
+)
 def create_submission(
     body: SubmissionIn,
     request: Request,

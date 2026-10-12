@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     supabase_url: str
     supabase_anon_key: str
     public_base_url: str = "http://localhost:8000"
+    rate_limit_max_requests: int = 10
+    rate_limit_window_seconds: int = 10
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

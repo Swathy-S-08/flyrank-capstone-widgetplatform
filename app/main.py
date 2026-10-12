@@ -14,7 +14,7 @@ app = FastAPI(title="Widget Platform")
 
 @app.exception_handler(StarletteHTTPException)
 async def http_error_handler(request: Request, exc: StarletteHTTPException):
-    return JSONResponse(status_code=exc.status_code, content={"error": str(exc.detail)})
+    return JSONResponse(status_code=exc.status_code, content={"error": str(exc.detail)}, headers=exc.headers)
 
 
 @app.exception_handler(NotFoundError)
