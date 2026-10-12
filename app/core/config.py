@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     geo_a_down: bool = False
     geo_b_down: bool = False
     geo_test_ip: str = ""
+    notify_fail: bool = False
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
