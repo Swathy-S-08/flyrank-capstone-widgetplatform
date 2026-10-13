@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.core.errors import NotFoundError, ValidationFailed
-from app.routes import submissions, widgets
+from app.routes import delivery, submissions, widgets
 
 MAX_SUBMISSION_BYTES = 10_000
 
@@ -69,6 +69,7 @@ app.add_middleware(
 
 app.include_router(widgets.router)
 app.include_router(submissions.router)
+app.include_router(delivery.router)
 
 
 @app.get("/health")
