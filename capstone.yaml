@@ -1,0 +1,41 @@
+name: flyrank-capstone-widgetplatform
+description: Embeddable widget and lead-capture platform (FastAPI, PostgreSQL, Docker Compose)
+
+# One command that boots everything. Creates .env from .env.example on first run
+# (AUTH_MODE=demo is pre-set) and waits until the API reports healthy.
+run: "[ -f .env ] || cp .env.example .env; docker compose up --build -d --wait"
+
+# Demo data: two tenants, one widget each, six sample submissions for owner 1.
+seed: "docker compose exec -T api python -m app.seed"
+
+# No automated test suite; verification is documented in EVIDENCE.md.
+# test:
+
+base_url: http://localhost:8000
+health: /health
+
+auth:
+  mode: demo
+  header: "Authorization: Bearer <token>"
+  tokens:
+    owner_1: demo-owner-1
+    owner_2: demo-owner-2
+
+seeded:
+  widget_id: demo-contact          # belongs to demo-owner-1
+  other_tenant_widget_id: demo-other   # belongs to demo-owner-2
+
+endpoints:
+  - { method: GET,    path: /health,                          auth: none }
+  - { method: POST,   path: /widgets,                         auth: owner }
+  - { method: GET,    path: /widgets,                         auth: owner }
+  - { method: GET,    path: "/widgets/{id}",                  auth: owner }
+  - { method: PUT,    path: "/widgets/{id}",                  auth: owner }
+  - { method: DELETE, path: "/widgets/{id}",                  auth: owner }
+  - { method: GET,    path: "/widgets/{id}/config",           auth: none, cache: "max-age=60" }
+  - { method: GET,    path: /widget.js?id={id},               auth: none, cache: "max-age=300, redirects to widget.v1.js" }
+  - { method: GET,    path: /widget.v1.js,                    auth: none, cache: "max-age=31536000, immutable" }
+  - { method: OPTIONS, path: /submissions,                    auth: none, note: CORS preflight }
+  - { method: POST,   path: /submissions,                     auth: none, note: "public, CORS, rate limited" }
+  - { method: GET,    path: /dashboard/submissions,           auth: owner }
+  - { method: GET,    path: /dashboard/stats,                 auth: owner }
