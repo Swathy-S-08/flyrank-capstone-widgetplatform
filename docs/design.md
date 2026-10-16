@@ -110,7 +110,7 @@ Body: `{"widget_id": "...", "data": {...}, "idempotency_key": "...", "website": 
 | Malformed or missing fields | 400 |
 | Body over size limit (e.g. 10 KB) | 413 |
 | Unknown or inactive widget | 404 |
-| Honeypot filled | 200 `{"id": "..."}` with nothing stored (silent drop, bot learns nothing) |
+| Honeypot filled | 201 `{"id": "..."}` with nothing stored (silent drop, identical to success so a bot learns nothing) |
 | Over rate limit | 429 + `Retry-After` |
 
 `OPTIONS /submissions` answers the CORS preflight.
@@ -137,3 +137,12 @@ Rule: routes never touch the database, repositories never raise HTTP errors.
 ## 5. Non-goal
 
 No visual form builder; only the contact_form widget type.
+
+## 6. Changes made while building
+
+- Honeypot returns 201 (not 200) so a bot cannot tell it was caught.
+- Rate limiting is an in-memory per-IP dependency that runs before validation, so every request counts. Per-widget limits are not implemented.
+- A missing Content-Length on `POST /submissions` returns 411, so the 10 KB limit cannot be bypassed.
+- `notification_status` can also be `skipped` (the widget has no email field).
+- `AUTH_MODE=demo` accepts two fixed evaluation tokens so a reviewer can run the system without a Supabase account. Supabase remains the real auth path.
+- The API runs in Docker Compose and applies migrations on start.
