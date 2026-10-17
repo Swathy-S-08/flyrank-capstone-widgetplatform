@@ -25,11 +25,9 @@ I used Claude (claude.ai chat) as a step-by-step mentor while building this caps
 
 ## What I decided or changed myself
 
-- [WRITE THIS: the parts you chose or changed by hand, for example choosing this capstone, FastAPI, the 10 per 10 second limit, or the honeypot behavior]
-- [WRITE THIS: anything you edited in the AI's code or text, and why]
+I chose the capstone because I wanted to understand how the application worked rather than just follow commands. I kept the scope focused on the required features and skipped the stretch goals so I could get the main functionality working and test it properly. I asked for explanations before running commands, which helped me understand what each step was doing. While debugging, I paid attention to which terminal was running the server, investigated the hanging server issue, and created a separate user to test whether one user could access another user's widgets. I also reviewed the project history and made changes to the code or documentation where necessary.
 
 ## What I can explain without help
 
-- [WRITE THIS: in 2 to 3 sentences, why the browser sends an OPTIONS preflight and what happens if the server does not answer it]
-- [WRITE THIS: in 2 to 3 sentences, how a request to /widgets/{id} for another tenant's widget ends up as a 404]
-- [WRITE THIS: in 2 to 3 sentences, what happens when the geo provider and the email both fail, and why the visitor still gets a 201]
+I understand that a browser sends an OPTIONS preflight request before certain cross-origin requests, such as requests using JSON content types or custom headers, to check whether the origin, method, and headers are allowed. If the server does not respond correctly, the browser blocks the actual POST request. When a user tries to access another tenant's widget, the authentication token provides the owner_id, and the database query checks both the widget ID and the owner ID. If no matching row exists, the service raises a not-found error, and the handler returns a 404 instead of a 403 because the resource is not found within that user's accessible resources. For location and email failures, the geo lookup falls back to saving the record without location if its providers fail. The database record is committed before the email job starts, and the email runs in the background after the response is sent. Therefore, the visitor can still receive a 201 Created response, while an email failure updates notification_status and records a log alert.
+
